@@ -8,7 +8,7 @@ namespace FeedbackService.Managers.Interfaces
     {
         Task<Feedback> CreateAsync(long userId, long orderId, Feedback feedback, CancellationToken cancellationToken);
         Task<Feedback> GetAsync(long userId, long orderId, CancellationToken cancellationToken);
-        Task UpdateAsync(long orderId, int rating, string comment, CancellationToken cancellationToken);
-        Task DeleteAsync(long orderId, CancellationToken cancellationToken);
+        Task<Feedback> UpdateAsync(long userId, long orderId, Feedback feedback, CancellationToken cancellationToken);
+        Task DeleteAsync(long userId, long orderId, CancellationToken cancellationToken);
     }
 }

@@ -45,6 +45,16 @@ namespace CachingManager.Managers
             return await _distributedCache.GetAsync(key, cancellationToken);
         }
 
+        public void Remove(string key)
+        {
+            _distributedCache.Remove(key);
+        }
+
+        public async Task RemoveAsync(string key, CancellationToken cancellationToken)
+        {
+            await _distributedCache.RemoveAsync(key, cancellationToken);
+        }
+
         public void SetCache<T>(string key, T message, DistributedCacheEntryOptions options)
         {
             _distributedCache.SetString(key, JsonSerializer.Serialize(message, typeof(T)), options);

@@ -14,5 +14,7 @@ namespace CachingManager.Managers
         byte[] GetFromCache(string key);
         Task<T> GetFromCacheAsync<T>(string key, CancellationToken cancellationToken);
         Task<byte[]> GetFromCacheAsync(string key, CancellationToken cancellationToken);
+        void Remove(string key);
+        Task RemoveAsync(string key, CancellationToken cancellationToken);
     }
 }

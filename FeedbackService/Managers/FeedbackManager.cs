@@ -28,15 +28,7 @@ namespace FeedbackService.Managers
 
         public async Task<Feedback> CreateAsync(long userId, long orderId, Feedback feedback, CancellationToken cancellationToken)
         {
-            var customer = await _customerManager.GetCustommerByIdAsync(userId, cancellationToken);
-            var order = await _orderManager.GetOrderByIdAsync(orderId, cancellationToken);
-
-            // We first check if the order is valid
-            if (order.CustomerSid != customer.Sid)
-            {
-                throw new ArgumentException(string.Format(OrderErrorMessages.OrderNotOwnedByUser, userId, orderId));
-            }
-
+            ValidateOrderAndCustomer(userId, orderId, cancellationToken, out Order order);
             // Now we check if the order has already been rated and the feedback exists.
             // if the feedback does noot exist, an exception will be thrown.
             Feedback existingFeedback = default;
@@ -65,62 +57,92 @@ namespace FeedbackService.Managers
             return savedFeedback;
         }
 
-        public async Task DeleteAsync(long orderId, CancellationToken cancellationToken)
+        public async Task DeleteAsync(long userId, long orderId, CancellationToken cancellationToken)
         {
-            var order = await _orderManager.GetOrderByIdAsync(orderId, cancellationToken);
-            Feedback feedback = default;
+            ValidateOrderAndCustomer(userId, orderId, cancellationToken, out Order order);
+            var feedback = await GetFromCacheAsync(userId, order, cancellationToken);
+
+            feedback ??= await _repository.GetAsync<Feedback>(feedback => feedback.Sid == order.FeedbackSid, cancellationToken);
             if (feedback == null)
             {
-                // nothing to delete
-                throw new ArgumentException(FeedbackErrorMessages.FeedbackDoesNotExists);
+                throw new ArgumentException(string.Format(OrderErrorMessages.OrderHasNotBeenRated, orderId));
             }
 
+            order.FeedbackSid = null;
+            await _orderManager.UpdateOrderAsync(order, cancellationToken);
             await _repository.DeleteAsync(feedback, cancellationToken);
 
-            feedback = null;
-            await _orderManager.UpdateOrderAsync(order, cancellationToken);
+            //Order and feedback must be removed from cache
+            await RemoveFromCacheAsync(nameof(Feedback), orderId.ToString(), cancellationToken);
+            await RemoveFromCacheAsync(nameof(Order), orderId.ToString(), cancellationToken);
+
         }
 
         public async Task<Feedback> GetAsync(long userId, long orderId, CancellationToken cancellationToken)
         {
-            var customer = await _customerManager.GetCustommerByIdAsync(userId, cancellationToken);
-            var order = await _orderManager.GetOrderByIdAsync(orderId, cancellationToken);
+            ValidateOrderAndCustomer(userId, orderId, cancellationToken, out Order order);
+            var feedback = await GetFromCacheAsync(userId, order, cancellationToken);
 
+            if (feedback != null)
+            {
+                return feedback;
+            }
+
+            feedback = await _repository.GetAsync<Feedback>(feedback => feedback.Sid == order.FeedbackSid, cancellationToken);
+            if (feedback == null)
+            {
+                throw new ArgumentException(string.Format(OrderErrorMessages.OrderHasNotBeenRated, orderId));
+            }
+
+            await SetCacheAsync(feedback, order.Sid, cancellationToken);
+            return feedback;
+        }
+
+        public async Task<Feedback> UpdateAsync(long userId, long orderId, Feedback newFeedback, CancellationToken cancellationToken)
+        {
+            var updatedFeedback = await GetAsync(userId, orderId, cancellationToken);
+
+            if (updatedFeedback.Rating != newFeedback.Rating)
+            {
+                updatedFeedback.Rating = newFeedback.Rating;
+            }
+
+            if (updatedFeedback.Comment != newFeedback.Comment)
+            {
+                updatedFeedback.Comment = newFeedback.Comment;
+            }
+
+            await _repository.UpdateAsync<Feedback>(updatedFeedback, cancellationToken);
+            await SetCacheAsync(updatedFeedback, orderId, cancellationToken);
+
+            return updatedFeedback;
+        }
+
+        private void ValidateOrderAndCustomer(long userId, long orderId, CancellationToken cancellationToken, out Order order)
+        {
+            var customer = _customerManager.GetCustommerByIdAsync(userId, cancellationToken).Result;
+            order = _orderManager.GetOrderByIdAsync(orderId, cancellationToken).Result;
+
+            // We first check if the order is valid
             if (order.CustomerSid != customer.Sid)
             {
                 throw new ArgumentException(string.Format(OrderErrorMessages.OrderNotOwnedByUser, userId, orderId));
             }
+        }
 
-            var feedback = await _repository.GetAsync<Feedback>(feedback => feedback.Sid == order.FeedbackSid, cancellationToken);
-
-            if (feedback == null)
-            {
-                throw new ArgumentException(string.Format(OrderErrorMessages.OrderHasNotBeenRated, orderId));
-            }
-
+        private async Task<Feedback> GetFromCacheAsync(long userId, Order order, CancellationToken cancellationToken)
+        {
+            var typeName = nameof(Feedback);
+            var cachedFeedback = await GetFromCacheAsync<Feedback>(typeName, order.Sid.ToString(), FeedbackErrorMessages.UnableToRetrieveFeedbackFromCache, cancellationToken);
+            var feedback = cachedFeedback?.Where(feedback => feedback.Sid == order.FeedbackSid).FirstOrDefault();
             return feedback;
         }
 
-        public async Task UpdateAsync(long orderId, int rating, string comment, CancellationToken cancellationToken)
+        private async Task SetCacheAsync(Feedback feedback, long orderId, CancellationToken cancellationToken)
         {
-            var order = await _orderManager.GetOrderByIdAsync(orderId, cancellationToken);
-            Feedback feedback = default;
-            if (feedback == null)
-            {
-                throw new ArgumentException(string.Format(OrderErrorMessages.OrderHasNotBeenRated, orderId));
-            }
-
-            if (rating != feedback.Rating)
-            {
-                feedback.Rating = rating;
-            }
-
-            if (comment != feedback.Comment)
-            {
-                feedback.Comment = comment;
-            }
-
-            await _repository.UpdateAsync<Feedback>(feedback, cancellationToken);
+            var typeName = nameof(Feedback);
+            var feedbackList = new List<Feedback> { feedback };
+            await SetCacheAsync(feedbackList, typeName, orderId.ToString(), cancellationToken);
         }
     }
 }

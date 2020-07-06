@@ -24,19 +24,12 @@ namespace FeedbackService.Controllers
 
         // POST: api/Feedback/5445
         [HttpPost("{orderId}")]
-        [AllowAnonymous]
-        public async Task<ActionResult> Post(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
+        public async Task<ActionResult> PostAsync(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
         {
             try
             {
-                var userId = GetUserIdFromHeader();
-                if (userId == null)
-                {
-                    return Unauthorized();
-                }
-
-                var feedback = await _feedbackManager.CreateAsync(Int64.Parse(userId), orderId, value, cancellationToken);
-
+                var userId = ValidateUserIdInHeader();
+                var feedback = await _feedbackManager.CreateAsync(userId, orderId, value, cancellationToken);
                 return Ok(feedback);
             }
             catch (Exception ex)
@@ -45,54 +38,67 @@ namespace FeedbackService.Controllers
             }
         }
 
-        // GET: api/Feedback
         [HttpGet("{orderId}")]
         public async Task<ActionResult<Feedback>> GetAsync(long orderId, CancellationToken cancellationToken)
         {
             Feedback feedback = default;
-
             try
             {
-                var userId = GetUserIdFromHeader();
-                if (userId == null)
-                {
-                    return Unauthorized();
-                }
-
-                feedback = await _feedbackManager.GetAsync(Int64.Parse(userId), orderId, cancellationToken);
+                var userId = ValidateUserIdInHeader();
+                feedback = await _feedbackManager.GetAsync(userId, orderId, cancellationToken);
             }
             catch (Exception ex)
             {
                 return Content(ex.Message);
             }
 
-            return feedback;
+            return Ok(feedback);
         }
-
-        // GET: api/Feedback/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }   
 
         // PUT: api/Feedback/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{orderId}")]
+        public async Task<ActionResult<Feedback>> PutAsync(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
         {
+            Feedback updatedFeedback = default;
+            try
+            {
+                var userId = ValidateUserIdInHeader();
+                updatedFeedback = await _feedbackManager.UpdateAsync(userId, orderId, value, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+
+            return Ok(updatedFeedback);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{orderId}")]
+        public async Task<ActionResult> DeleteAsync(long orderId, CancellationToken cancellationToken)
         {
+            try
+            {
+                var userId = ValidateUserIdInHeader();
+                await _feedbackManager.DeleteAsync(userId, orderId, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+
+            return Ok("Correctly Deleted");
         }
 
-        private string GetUserIdFromHeader()
+        private long ValidateUserIdInHeader()
         {
             var header = Request.Headers;
-            var userId = header["UserId"].FirstOrDefault();
-            return userId;
+            var incomingUserId = header["UserId"].FirstOrDefault();
+            if (string.IsNullOrEmpty(incomingUserId))
+            {
+                throw new InvalidCastException("UserId was not set in header");
+            }
+
+            return Int64.Parse(incomingUserId);
         }
     }
 }
