@@ -1,0 +1,9 @@
+G:\VS19PROJECTS\FeedbackService\CachingManager\bin\Debug\netstandard2.0\CachingManager.deps.json
+G:\VS19PROJECTS\FeedbackService\CachingManager\bin\Debug\netstandard2.0\CachingManager.dll
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.AssemblyInfoInputs.cache
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.AssemblyInfo.cs
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.csprojAssemblyReference.cache
+G:\VS19PROJECTS\FeedbackService\CachingManager\bin\Debug\netstandard2.0\CachingManager.pdb
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.csproj.CoreCompileInputs.cache
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.dll
+G:\VS19PROJECTS\FeedbackService\CachingManager\obj\Debug\netstandard2.0\CachingManager.pdb
