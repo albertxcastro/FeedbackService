@@ -58,10 +58,16 @@ namespace FeedbackService
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 
+            services.AddTransient<IProductManager, ProductManager>(provider => new ProductManager(
+                provider.GetService<IRepository>(),
+                provider.GetService<IDistributedCacheManager>(),
+                provider.GetService<IOptions<CacheOptions>>()));
+
             services.AddTransient<IFeedbackManager, FeedbackManager>(provider => new FeedbackManager(
                 provider.GetService<IRepository>(),
                 provider.GetService<IOrderManager>(),
                 provider.GetService<ICustomerManager>(),
+                provider.GetService<IProductManager>(),
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 

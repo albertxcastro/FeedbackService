@@ -7,6 +7,5 @@ namespace FeedbackService.DataAccess.Models
 {
     public class BaseEntity
     {
-        public long Sid { get; set; }
     }
 }

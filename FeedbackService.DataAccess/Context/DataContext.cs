@@ -84,6 +84,10 @@ namespace FeedbackService.DataAccess.Context
                     .HasColumnName("comment")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.CustomerSid).HasColumnName("customer_sid");
+
+                entity.Property(e => e.OrderSid).HasColumnName("order_sid");
+
                 entity.Property(e => e.CreateTime).HasColumnName("create_time");
 
                 entity.Property(e => e.Rating).HasColumnName("rating");
@@ -108,16 +112,7 @@ namespace FeedbackService.DataAccess.Context
 
                 entity.Property(e => e.TotalPrice).HasColumnName("total_price");
 
-                //entity.HasOne(d => d.FeedbackS)
-                //    .WithMany(p => p.Order)
-                //    .HasForeignKey(d => d.FeedbackSid)
-                //    .HasConstraintName("order_feedback_sid_fkey");
-
-                //entity.HasOne(d => d.OwnerS)
-                //    .WithMany(p => p.Order)
-                //    .HasForeignKey(d => d.OwnerSid)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("order_owner_sid_fkey");
+                entity.Property(e => e.Products).HasColumnName("products");
             });
 
             modelBuilder.Entity<OrderToProduct>(entity =>
@@ -136,17 +131,7 @@ namespace FeedbackService.DataAccess.Context
                     .HasColumnType("numeric")
                     .HasDefaultValueSql("1");
 
-                //entity.HasOne(d => d.Orders)
-                //    .WithMany(p => p.OrderToProduct)
-                //    .HasForeignKey(d => d.Ordersid)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("order_to_product_ordersid_fkey");
-
-                //entity.HasOne(d => d.ProductS)
-                //    .WithMany(p => p.OrderToProduct)
-                //    .HasForeignKey(d => d.ProductSid)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("order_to_product_product_sid_fkey");
+                entity.Property(e => e.FeedbackSid).HasColumnName("feedback_sid");
             });
 
             modelBuilder.Entity<Product>(entity =>

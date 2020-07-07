@@ -40,15 +40,15 @@ namespace FeedbackService.Managers
 
             order = await _repository.GetAsync<Order>(order => order.Sid == orderId, cancellationToken);
 
-            if (order != null)
+            if (order == null)
             {
-                var orderList = new List<Order> { order };
-                await SetCacheAsync(orderList, typeName, orderId.ToString(), cancellationToken);
-                return order;
+               // if the order is null, just throw this exception
+                throw new ArgumentException(string.Format(OrderErrorMessages.OrderDoesNotExists, orderId));
             }
 
-            // if the order is null, just throw this exception
-            throw new ArgumentException(string.Format(OrderErrorMessages.OrderDoesNotExists, orderId));
+            var orderList = new List<Order> { order };
+            await SetCacheAsync(orderList, typeName, orderId.ToString(), cancellationToken);
+            return order;
         }
 
         public async Task UpdateOrderAsync(Order order, CancellationToken cancellationToken)
@@ -57,7 +57,7 @@ namespace FeedbackService.Managers
 
             var orderList = new List<Order> { order };
             await SetCacheAsync(orderList, typeName, order.Sid.ToString(), cancellationToken);
-            await _repository.UpdateAsync<Order>(order, cancellationToken);
+            _repository.Update<Order>(order);
         }
     }
 }   

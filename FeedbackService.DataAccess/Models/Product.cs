@@ -5,14 +5,8 @@ namespace FeedbackService.DataAccess.Models
 {
     public partial class Product : BaseEntity
     {
-        //public Product()
-        //{
-        //    OrderToProduct = new HashSet<OrderToProduct>();
-        //}
-
+        public long Sid { get; set; }
         public string Name { get; set; }
         public float Price { get; set; }
-
-        //public virtual ICollection<OrderToProduct> OrderToProduct { get; set; }
     }
 }

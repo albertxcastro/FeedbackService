@@ -4,6 +4,7 @@ using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using FeedbackService.StringConstants.Messages;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,15 @@ namespace FeedbackService.Managers
         private readonly IRepository _repository;
         private readonly IOrderManager _orderManager;
         private readonly ICustomerManager _customerManager;
+        private readonly IProductManager _productManager;
 
-        public FeedbackManager(IRepository repository, IOrderManager ordermanager, ICustomerManager customerManager, IDistributedCacheManager distributedCacheManager, IOptions<CacheOptions> cacheOptions)
+        public FeedbackManager(IRepository repository, IOrderManager ordermanager, ICustomerManager customerManager, IProductManager productManager, IDistributedCacheManager distributedCacheManager, IOptions<CacheOptions> cacheOptions)
             : base(distributedCacheManager, cacheOptions)
         {
             _repository = repository;
             _orderManager = ordermanager;
             _customerManager = customerManager;
+            _productManager = productManager;
         }
 
         public async Task<Feedback> CreateAsync(long userId, long orderId, Feedback feedback, CancellationToken cancellationToken)
@@ -45,14 +48,20 @@ namespace FeedbackService.Managers
                 throw new ArgumentException(FeedbackErrorMessages.FeedbackAlreadyExists);
             }
 
+            ValidateRating(feedback.Rating);
+
             // if all the filters passed, then we can create the new feedback using the repository
             feedback.CreateTime = DateTime.UtcNow;
+            feedback.CustomerSid = userId;
+            feedback.OrderSid = orderId;
             var savedFeedback = await _repository.CreateAsync(feedback, cancellationToken);
 
             // Update the order
-            //order.FeedbackS = savedFeedback;
             order.FeedbackSid = savedFeedback.Sid;
             await _orderManager.UpdateOrderAsync(order, cancellationToken);
+
+            // Populate products just to display them
+            savedFeedback.Products = await _productManager.GetProductsByOrderIdAsync(orderId, cancellationToken);
 
             return savedFeedback;
         }
@@ -70,12 +79,11 @@ namespace FeedbackService.Managers
 
             order.FeedbackSid = null;
             await _orderManager.UpdateOrderAsync(order, cancellationToken);
-            await _repository.DeleteAsync(feedback, cancellationToken);
+             _repository.Delete(feedback);
 
             //Order and feedback must be removed from cache
             await RemoveFromCacheAsync(nameof(Feedback), orderId.ToString(), cancellationToken);
             await RemoveFromCacheAsync(nameof(Order), orderId.ToString(), cancellationToken);
-
         }
 
         public async Task<Feedback> GetAsync(long userId, long orderId, CancellationToken cancellationToken)
@@ -101,6 +109,7 @@ namespace FeedbackService.Managers
         public async Task<Feedback> UpdateAsync(long userId, long orderId, Feedback newFeedback, CancellationToken cancellationToken)
         {
             var updatedFeedback = await GetAsync(userId, orderId, cancellationToken);
+            ValidateRating(newFeedback.Rating);
 
             if (updatedFeedback.Rating != newFeedback.Rating)
             {
@@ -112,10 +121,49 @@ namespace FeedbackService.Managers
                 updatedFeedback.Comment = newFeedback.Comment;
             }
 
-            await _repository.UpdateAsync<Feedback>(updatedFeedback, cancellationToken);
+            _repository.Update<Feedback>(updatedFeedback);
             await SetCacheAsync(updatedFeedback, orderId, cancellationToken);
 
+            // Populate products just to display them
+            updatedFeedback.Products = await _productManager.GetProductsByOrderIdAsync(orderId, cancellationToken);
             return updatedFeedback;
+        }
+
+        public async Task<List<Feedback>> GetLatestAsync(int? rating, CancellationToken cancellationToken)
+        {
+            var ratingVal = rating.GetValueOrDefault();
+            if (ratingVal != 0)
+            {
+                ValidateRating(ratingVal);
+            }
+
+            var typeName = nameof(Feedback);
+            var feedbackList = await GetFromCacheAsync<Feedback>(typeName, ratingVal.ToString(), FeedbackErrorMessages.UnableToRetrieveFeedbackFromCache, cancellationToken);
+
+            if (feedbackList != null)
+            {
+                return feedbackList;
+            }
+
+            if (rating.HasValue)
+            {
+                feedbackList = (await _repository.GetListAsync<Feedback>(feedback => feedback.Rating == ratingVal, cancellationToken))
+                    .OrderByDescending(feedback => feedback.CreateTime)
+                    .Take(20).ToList();
+            }
+            else
+            {
+                feedbackList = (await _repository.GetAllAsync<Feedback>(cancellationToken))
+                    .OrderByDescending(feedback => feedback.CreateTime)
+                    .Take(20).ToList();
+            }
+
+            foreach(var feedback in feedbackList)
+            {
+                feedback.Products = await _productManager.GetProductsByOrderIdAsync(feedback.OrderSid, cancellationToken);
+            }
+
+            return feedbackList;
         }
 
         private void ValidateOrderAndCustomer(long userId, long orderId, CancellationToken cancellationToken, out Order order)
@@ -143,6 +191,14 @@ namespace FeedbackService.Managers
             var typeName = nameof(Feedback);
             var feedbackList = new List<Feedback> { feedback };
             await SetCacheAsync(feedbackList, typeName, orderId.ToString(), cancellationToken);
+        }
+
+        private void ValidateRating(int rating)
+        {
+            if (rating < 1 || rating > 5)
+            {
+                throw new ArgumentException(FeedbackErrorMessages.InvalidRatingValue);
+            }
         }
     }
 }

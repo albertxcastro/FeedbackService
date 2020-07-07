@@ -4,8 +4,10 @@ using FeedbackService.DataAccess.Models;
 using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -28,25 +30,42 @@ namespace FeedbackService.Managers
             return await dbSet.Where(predicate).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<T> CreateAsync<T>(T entity, CancellationToken cancellationToken) where T : BaseEntity
+        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : BaseEntity
         {
             var dbSet = _dbContext.Set<T>();
-            await dbSet.AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return await dbSet.Where(e => entity == e).FirstOrDefaultAsync(cancellationToken);
+            return await dbSet.Where(predicate).ToListAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync<T>(T entity, CancellationToken cancellationToken) where T : BaseEntity
+        public async Task<List<T>> GetAllAsync<T>(CancellationToken cancellationToken) where T : BaseEntity
+        {
+            var dbSet = _dbContext.Set<T>();
+            return await dbSet.ToListAsync(cancellationToken);
+        }
+
+        public async Task<T> CreateAsync<T>(T entity, CancellationToken cancellationToken) where T : BaseEntity
+        {
+            using (IDbContextTransaction transaction = _dbContext.Database.BeginTransaction())
+            {
+                var dbSet = _dbContext.Set<T>();
+                await dbSet.AddAsync(entity, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                transaction.Commit();
+            }
+
+            return entity;
+        }
+
+        public void Update<T>(T entity) where T : BaseEntity
         {
             _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.SaveChanges();
         }
 
-        public async Task DeleteAsync<T>(T entity, CancellationToken cancellationToken) where T : BaseEntity
+        public void Delete<T>(T entity) where T : BaseEntity
         {
             var dbSet = _dbContext.Set<T>();
             dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.SaveChanges();
         }
     }
 }

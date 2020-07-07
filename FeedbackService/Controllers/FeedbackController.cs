@@ -4,6 +4,7 @@ using FeedbackService.Managers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace FeedbackService.Controllers
         [HttpGet("{orderId}")]
         public async Task<ActionResult<Feedback>> GetAsync(long orderId, CancellationToken cancellationToken)
         {
-            Feedback feedback = default;
+            Feedback feedback;
             try
             {
                 var userId = ValidateUserIdInHeader();
@@ -55,11 +56,27 @@ namespace FeedbackService.Controllers
             return Ok(feedback);
         }
 
+        [HttpGet("GetLatest/{rating?}")]
+        public async Task<ActionResult<Feedback>> GetLatestAsync(int? rating, CancellationToken cancellationToken)
+        {
+            List<Feedback> feedbackList;
+            try
+            {
+                feedbackList = await _feedbackManager.GetLatestAsync(rating, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+
+            return Ok(feedbackList);
+        }
+
         // PUT: api/Feedback/5
         [HttpPut("{orderId}")]
         public async Task<ActionResult<Feedback>> PutAsync(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
         {
-            Feedback updatedFeedback = default;
+            Feedback updatedFeedback;
             try
             {
                 var userId = ValidateUserIdInHeader();
@@ -83,7 +100,7 @@ namespace FeedbackService.Controllers
             }
             catch (Exception ex)
             {
-                return Content(ex.Message);
+                return Content(string.Format("{0}: {1}", ex.Message, ex.InnerException.Message));
             }
 
             return Ok("Correctly Deleted");

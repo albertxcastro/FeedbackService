@@ -47,7 +47,6 @@ namespace FeedbackService.Managers
 
         protected virtual async Task RemoveFromCacheAsync(string typeName, string entityId, CancellationToken cancellationToken)
         {
-            var distributedCacheOptions = CacheHelper.GetCacheEntryOptions(typeName, _cacheOptions);
             await _distributedCacheManager.RemoveAsync(string.Concat(_cacheOptions.ApplicationAlias, "_", entityId, "_", typeName), cancellationToken);
         }
     }
