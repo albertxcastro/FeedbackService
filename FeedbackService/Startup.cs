@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CachingManager.Managers;
+using FeedbackService.DataAccess.Context;
+using FeedbackService.Facade;
+using FeedbackService.Facade.Interfaces;
+using FeedbackService.Factory;
+using FeedbackService.Managers;
+using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using CachingManager.Managers;
-using Microsoft.Extensions.Caching.Distributed;
-using FeedbackService.Managers.Interfaces;
-using FeedbackService.Managers;
 using Microsoft.Extensions.Options;
-using FeedbackService.DataAccess.Context;
 
 namespace FeedbackService
 {
@@ -36,38 +32,47 @@ namespace FeedbackService
             services.AddControllers();
             services.Configure<CacheOptions>(Configuration.GetSection("CacheOptions"));
             services.AddStackExchangeRedisCache(options => options.Configuration = Configuration["CacheOptions:Configuration"]);
-            services.AddEntityFrameworkNpgsql().AddDbContext<DataContext>(options => options.UseNpgsql(Configuration["DatabaseOptions:ConnectionString"]));
+            services.AddDbContext<DataContext>(options => options.UseNpgsql(Configuration["DatabaseOptions:ConnectionString"]), ServiceLifetime.Transient);
+            //AddEntityFrameworkNpgsql()
             services.AddSingleton<IDistributedCacheManager>(provider => new DistributedCacheManager(provider.GetService<IDistributedCache>()));
 
             services.AddTransient<IRepository, RepositoryManager>(provider => new RepositoryManager(
-                provider.GetService<DataContext>()));
+                provider.GetService<DataContext>(),
+                new FactoryManager()));
 
-            services.AddTransient<IAuthenticationManager, AuthenticationManager>(provider => new AuthenticationManager(
+            services.AddTransient<IAuthenticationFacade, AuthenticationFacade>(provider => new AuthenticationFacade(
                 provider.GetService<IRepository>(),
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 
-            services.AddTransient<IOrderManager, OrderManager>(provider => new OrderManager(
+            services.AddTransient<IOrderFacade, OrderFacade>(provider => new OrderFacade(
                 provider.GetService<IRepository>(),
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 
-            services.AddTransient<ICustomerManager, CustomerManager>(provider => new CustomerManager(
-                provider.GetService<IRepository>(),
-                provider.GetService<IOrderManager>(),
-                provider.GetService<IDistributedCacheManager>(),
-                provider.GetService<IOptions<CacheOptions>>()));
-
-            services.AddTransient<IProductManager, ProductManager>(provider => new ProductManager(
+            services.AddTransient<ICustomerFacade, CustomerFacade>(provider => new CustomerFacade(
                 provider.GetService<IRepository>(),
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 
-            services.AddTransient<IFeedbackManager, FeedbackManager>(provider => new FeedbackManager(
+            services.AddTransient<IProductFacade, ProductFacade>(provider => new ProductFacade(
                 provider.GetService<IRepository>(),
-                provider.GetService<IOrderManager>(),
-                provider.GetService<ICustomerManager>(),
-                provider.GetService<IProductManager>(),
+                provider.GetService<IDistributedCacheManager>(),
+                provider.GetService<IOptions<CacheOptions>>()));
+
+            services.AddTransient<IOrderFeedbackFacade, OrderFeedbackFacade>(provider => new OrderFeedbackFacade(
+                provider.GetService<IRepository>(),
+                provider.GetService<IOrderFacade>(),
+                provider.GetService<ICustomerFacade>(),
+                provider.GetService<IProductFacade>(),
+                provider.GetService<IDistributedCacheManager>(),
+                provider.GetService<IOptions<CacheOptions>>()));
+
+            services.AddTransient<IProductFeedbackFacade, ProductFeedbackFacade>(provider => new ProductFeedbackFacade(
+                provider.GetService<IRepository>(),
+                provider.GetService<IOrderFacade>(),
+                provider.GetService<ICustomerFacade>(),
+                provider.GetService<IProductFacade>(),
                 provider.GetService<IDistributedCacheManager>(),
                 provider.GetService<IOptions<CacheOptions>>()));
 

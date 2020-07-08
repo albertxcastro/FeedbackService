@@ -91,6 +91,8 @@ namespace FeedbackService.DataAccess.Context
                 entity.Property(e => e.CreateTime).HasColumnName("create_time");
 
                 entity.Property(e => e.Rating).HasColumnName("rating");
+
+                entity.Property(e => e.FeedbackType).HasColumnName("feedback_type");
             });
 
             modelBuilder.Entity<Order>(entity =>

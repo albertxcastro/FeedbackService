@@ -12,6 +12,7 @@ namespace FeedbackService.DataAccess.Models
         public DateTime CreateTime { get; set; }
         public long OrderSid { get; set; }
         public long CustomerSid { get; set; }
+        public int FeedbackType { get; set; }
 
         [NotMapped]
         public List<Product> Products { get; set; }

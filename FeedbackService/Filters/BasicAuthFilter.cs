@@ -1,10 +1,8 @@
-﻿using FeedbackService.Managers.Interfaces;
+﻿using FeedbackService.Facade.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -58,7 +56,7 @@ namespace FeedbackService.Filters
 
         public async Task<bool> IsAuthorizedAsync(AuthorizationFilterContext context, string username, string password)
         {
-            var authenticationService = context.HttpContext.RequestServices.GetRequiredService<IAuthenticationManager>();
+            var authenticationService = context.HttpContext.RequestServices.GetRequiredService<IAuthenticationFacade>();
             return await authenticationService.Authenticate(username, password, context.HttpContext.RequestAborted);
         }
 

@@ -1,6 +1,7 @@
 ﻿using CachingManager.Managers;
 using FeedbackService.DataAccess.Context;
 using FeedbackService.DataAccess.Models;
+using FeedbackService.Factory;
 using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using Microsoft.EntityFrameworkCore;
@@ -17,42 +18,36 @@ namespace FeedbackService.Managers
 {
     public class RepositoryManager : IRepository
     {
-        private readonly DataContext _dbContext;
+        protected readonly DataContext _dbContext;
+        private readonly FactoryManager _factory;
 
-        public RepositoryManager(DataContext context)
+        public RepositoryManager(DataContext context, FactoryManager factoryManager)
         {
             _dbContext = context;
+            _factory = factoryManager;
         }
 
-        public async Task<T> GetAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : BaseEntity
+        public virtual async Task<T> GetAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : BaseEntity
         {
             var dbSet = _dbContext.Set<T>();
             return await dbSet.Where(predicate).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : BaseEntity
+        public virtual async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken) where T : BaseEntity
         {
             var dbSet = _dbContext.Set<T>();
             return await dbSet.Where(predicate).ToListAsync(cancellationToken);
         }
 
-        public async Task<List<T>> GetAllAsync<T>(CancellationToken cancellationToken) where T : BaseEntity
+        public virtual async Task<List<T>> GetAllAsync<T>(CancellationToken cancellationToken) where T : BaseEntity
         {
             var dbSet = _dbContext.Set<T>();
             return await dbSet.ToListAsync(cancellationToken);
         }
 
-        public async Task<T> CreateAsync<T>(T entity, CancellationToken cancellationToken) where T : BaseEntity
+        public T GetManagerInstance<T>() where T : BaseManager, new()
         {
-            using (IDbContextTransaction transaction = _dbContext.Database.BeginTransaction())
-            {
-                var dbSet = _dbContext.Set<T>();
-                await dbSet.AddAsync(entity, cancellationToken);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                transaction.Commit();
-            }
-
-            return entity;
+            return _factory.CreateManager<T>(_dbContext);
         }
 
         public void Update<T>(T entity) where T : BaseEntity
