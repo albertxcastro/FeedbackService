@@ -1,5 +1,4 @@
-﻿using FeedbackService.DataAccess.Context;
-using FeedbackService.DataAccess.Models;
+﻿using FeedbackService.DataAccess.Models;
 using FeedbackService.Managers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;

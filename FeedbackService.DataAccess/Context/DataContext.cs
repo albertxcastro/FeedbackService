@@ -1,7 +1,5 @@
-﻿using System;
+﻿using FeedbackService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using FeedbackService.DataAccess.Models;
 
 namespace FeedbackService.DataAccess.Context
 {

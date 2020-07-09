@@ -3,9 +3,7 @@ using FeedbackService.DataAccess.Models;
 using FeedbackService.Facade.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Xunit;
 

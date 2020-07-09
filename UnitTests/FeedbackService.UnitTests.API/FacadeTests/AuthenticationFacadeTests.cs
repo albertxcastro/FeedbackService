@@ -1,11 +1,6 @@
-﻿using CachingManager.Managers;
-using FeedbackService.DataAccess.Models;
+﻿using FeedbackService.DataAccess.Models;
 using FeedbackService.Facade;
-using FeedbackService.Managers.Interfaces;
-using FeedbackService.Options;
 using FeedbackService.UnitTests.Fixture;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
 using Moq;
 using System.Collections.Generic;
 using System.Threading;

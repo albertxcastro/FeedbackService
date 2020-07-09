@@ -7,7 +7,6 @@ using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using FeedbackService.StringConstants.Messages;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;

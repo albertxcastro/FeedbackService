@@ -1,17 +1,14 @@
 ﻿using CachingManager.Managers;
-using FeedbackService.DataAccess.Context;
 using FeedbackService.DataAccess.Models;
 using FeedbackService.Enums;
 using FeedbackService.Facade.Interfaces;
 using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace FeedbackService.UnitTests.Fixture

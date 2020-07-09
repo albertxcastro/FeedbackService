@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace FeedbackService.DataAccess.Models
+﻿namespace FeedbackService.DataAccess.Models
 {
     public partial class Product : BaseEntity
     {

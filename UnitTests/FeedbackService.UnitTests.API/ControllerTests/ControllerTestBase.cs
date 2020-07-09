@@ -1,7 +1,4 @@
-﻿using FeedbackService.Controllers;
-using FeedbackService.Facade.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace FeedbackService.UnitTests.API.ControllerTests

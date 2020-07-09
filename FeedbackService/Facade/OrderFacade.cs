@@ -1,7 +1,6 @@
 ﻿using CachingManager.Managers;
 using FeedbackService.DataAccess.Models;
 using FeedbackService.Facade.Interfaces;
-using FeedbackService.Managers;
 using FeedbackService.Managers.Interfaces;
 using FeedbackService.Options;
 using FeedbackService.StringConstants.Messages;

@@ -1,12 +1,8 @@
-﻿using CachingManager.Managers;
-using FeedbackService.DataAccess.Context;
+﻿using FeedbackService.DataAccess.Context;
 using FeedbackService.DataAccess.Models;
 using FeedbackService.Factory;
 using FeedbackService.Managers.Interfaces;
-using FeedbackService.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;

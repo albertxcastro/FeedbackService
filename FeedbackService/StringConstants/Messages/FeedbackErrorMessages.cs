@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FeedbackService.StringConstants.Messages
+﻿namespace FeedbackService.StringConstants.Messages
 {
     public static class FeedbackErrorMessages
     {
