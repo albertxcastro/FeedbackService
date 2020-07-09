@@ -1,0 +1,9 @@
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\bin\Debug\netstandard2.0\FeedbackService.DataAccess.deps.json
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\bin\Debug\netstandard2.0\FeedbackService.DataAccess.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\bin\Debug\netstandard2.0\FeedbackService.DataAccess.pdb
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.csprojAssemblyReference.cache
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.csproj.CoreCompileInputs.cache
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.AssemblyInfoInputs.cache
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.AssemblyInfo.cs
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService.DataAccess\obj\Debug\netstandard2.0\FeedbackService.DataAccess.pdb

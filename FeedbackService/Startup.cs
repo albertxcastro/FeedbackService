@@ -33,7 +33,6 @@ namespace FeedbackService
             services.Configure<CacheOptions>(Configuration.GetSection("CacheOptions"));
             services.AddStackExchangeRedisCache(options => options.Configuration = Configuration["CacheOptions:Configuration"]);
             services.AddDbContext<DataContext>(options => options.UseNpgsql(Configuration["DatabaseOptions:ConnectionString"]), ServiceLifetime.Transient);
-            //AddEntityFrameworkNpgsql()
             services.AddSingleton<IDistributedCacheManager>(provider => new DistributedCacheManager(provider.GetService<IDistributedCache>()));
 
             services.AddTransient<IRepository, RepositoryManager>(provider => new RepositoryManager(

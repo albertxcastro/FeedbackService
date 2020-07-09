@@ -38,7 +38,7 @@ namespace FeedbackService.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public async Task<ActionResult<Feedback>> GetAsync(long orderId, CancellationToken cancellationToken)
+        public async Task<ActionResult> GetAsync(long orderId, CancellationToken cancellationToken)
         {
             Feedback feedback;
             try
@@ -55,7 +55,7 @@ namespace FeedbackService.Controllers
         }
 
         [HttpGet("GetLatest/{rating?}")]
-        public async Task<ActionResult<Feedback>> GetLatestAsync(int? rating, CancellationToken cancellationToken)
+        public async Task<ActionResult> GetLatestAsync(int? rating, CancellationToken cancellationToken)
         {
             List<Feedback> feedbackList;
             try
@@ -71,7 +71,7 @@ namespace FeedbackService.Controllers
         }
 
         [HttpPut("{orderId}")]
-        public async Task<ActionResult<Feedback>> PutAsync(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
+        public async Task<ActionResult> PutAsync(long orderId, [FromBody] Feedback value, CancellationToken cancellationToken)
         {
             Feedback updatedFeedback;
             try
@@ -97,7 +97,7 @@ namespace FeedbackService.Controllers
             }
             catch (Exception ex)
             {
-                return Content(string.Format("{0}: {1}", ex.Message, ex.InnerException?.Message));
+                return Content(ex.Message);
             }
 
             return Ok("Correctly Deleted");

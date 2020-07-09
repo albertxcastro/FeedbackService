@@ -113,7 +113,19 @@ namespace FeedbackService.Facade
 
             if (feedbackList != null)
             {
-                return feedbackList;
+                if (rating.HasValue)
+                {
+                    return feedbackList
+                    .Where(feedback => feedback.Rating == ratingVal)
+                    .OrderByDescending(feedback => feedback.CreateTime)
+                    .Take(20).ToList();
+                }
+                else
+                {
+                    return feedbackList
+                    .OrderByDescending(feedback => feedback.CreateTime)
+                    .Take(20).ToList();
+                }
             }
 
             if (rating.HasValue)
@@ -145,8 +157,8 @@ namespace FeedbackService.Facade
 
         public async Task<Feedback> UpdateAsync(long userId, long orderId, Feedback newFeedback, CancellationToken cancellationToken)
         {
-            var updatedFeedback = await GetAsync(userId, orderId, cancellationToken);
             ValidateRating(newFeedback.Rating);
+            var updatedFeedback = await GetAsync(userId, orderId, cancellationToken);
 
             if (updatedFeedback.Rating != newFeedback.Rating)
             {

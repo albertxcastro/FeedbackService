@@ -102,8 +102,8 @@ namespace FeedbackService.Facade
 
         public async Task<Feedback> UpdateAsync(long userId, long orderId, long productId, Feedback newFeedback, CancellationToken cancellationToken)
         {
-            var updatedFeedback = await GetAsync(userId, orderId, productId, cancellationToken);
             ValidateRating(newFeedback.Rating);
+            var updatedFeedback = await GetAsync(userId, orderId, productId, cancellationToken);
 
             if (updatedFeedback.Rating != newFeedback.Rating)
             {

@@ -1,9 +1,5 @@
 ﻿using FeedbackService.DataAccess.Context;
 using FeedbackService.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FeedbackService.Factory
 {

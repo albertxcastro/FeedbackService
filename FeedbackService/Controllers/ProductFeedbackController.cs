@@ -77,7 +77,7 @@ namespace FeedbackService.Controllers
             }
             catch (Exception ex)
             {
-                return Content(string.Format("{0}: {1}", ex.Message, ex.InnerException?.Message));
+                return Content(ex.Message);
             }
         }
 
