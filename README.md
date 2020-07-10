@@ -118,3 +118,16 @@ Please read more at the [Swagger website](https://swagger.io/)
 
 ## Live demo
 The application has been deployed to AWS for testing purposes. It is up and running [here](http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/swagger/index.html)
+To authenticate, use:
+ * **Username:** superadmin
+ * **Password:** superadmin
+ 
+In the headers, include **UserId** and the value can be from **1** to **5** (all of them have orders with products).
+This would be the URL to retrieve the feedback on order 151:
+ * http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/api/OrderFeedback/151
+ 
+This would be the URL to retrieve the last 20 feedbacks left by users on orders filtered by rating and ordered by creation time descending. If no rating provided, the list is not filtered by rating but just ordered by creation time. For example, this retrieves feedback rated as 4:
+ * http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/api/OrderFeedback/GetLatest/4
+
+This would be the URL to retrieve the feedback on the product with productId 1 which is contained in order 117:
+ * http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/api/ProductFeedback/117/1
