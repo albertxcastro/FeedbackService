@@ -85,7 +85,7 @@ namespace FeedbackService
                 {
                     Title = "FeedbackService API v1", 
                     Version = "v1",
-                    Description = "API that allow users to share feedback about their grocery orders and the items contained in the orders."
+                    Description = "API that allow users to share feedback about their grocery orders and the items contained in the orders. Source code and details at https://github.com/albertxcastro/FeedbackService"
                 });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
