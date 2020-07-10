@@ -14,6 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace FeedbackService
 {
@@ -76,11 +79,30 @@ namespace FeedbackService
                 provider.GetService<IOptions<CacheOptions>>()));
 
             services.AddControllers().AddNewtonsoftJson();
+            services.AddSwaggerGen(options => 
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+                {
+                    Title = "FeedbackService API v1", 
+                    Version = "v1",
+                    Description = "API that allow users to share feedback about their grocery orders and the items contained in the orders."
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FeedbackService API v1");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -133,5 +133,12 @@ G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\Feedback
 G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.pdb
 G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.genruntimeconfig.cache
 G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.InMemory.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
 G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.csproj.CoreCompileInputs.cache
+G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.MvcApplicationPartsAssemblyInfo.cs
 G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.MvcApplicationPartsAssemblyInfo.cache
+G:\VS19PROJECTS\FeedbackService\FeedbackService\bin\Debug\netcoreapp3.1\FeedbackService.xml
+G:\VS19PROJECTS\FeedbackService\FeedbackService\obj\Debug\netcoreapp3.1\FeedbackService.xml
