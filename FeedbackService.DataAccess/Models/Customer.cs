@@ -2,16 +2,10 @@
 {
     public partial class Customer : BaseEntity
     {
-        //public Customer()
-        //{
-        //    Order = new HashSet<Order>();
-        //}
         public long Sid { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        //public virtual ICollection<Order> Order { get; set; }
     }
 }
