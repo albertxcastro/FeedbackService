@@ -112,7 +112,9 @@ The technical approach will use Entity Framework Core and Npgsql as data provide
 
 ## API Documentation
 Swagger is used to autogenerate the API documentation.
-
+![Swagger UI](https://github.com/albertxcastro/FeedbackService/blob/master/Diagrams/Swagger%20UI.png)
 
 Please read more at the [Swagger website](https://swagger.io/)
 
+## Live demo
+The application has been deployed to AWS for testing purposes. You can find it [here](http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/swagger/index.html)
