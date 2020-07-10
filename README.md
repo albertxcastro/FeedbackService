@@ -117,7 +117,8 @@ Swagger is used to autogenerate the API documentation.
 Please read more at the [Swagger website](https://swagger.io/)
 
 ## Live demo
-The application has been deployed to AWS for testing purposes. It is up and running [here](http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/swagger/index.html)
+The application has been deployed to AWS for testing purposes. It is up and running [here](http://feedbackserviceapi-dev.us-west-2.elasticbeanstalk.com/swagger/index.html) 
+
 To authenticate, use:
  * **Username:** superadmin
  * **Password:** superadmin
