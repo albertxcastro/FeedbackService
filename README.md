@@ -21,7 +21,7 @@ The design of the new components will consist of the following items:
 A set of RESTful endpoints will be exposed from the FeedbackService using ASP.NET Core, all of them requesting Basic Authentication and the userId (the customer who owns the order) in the headers.
 * **OrderFeedback**: Used to rate existing orders. Methods:
   * **[GET]** /api/OrderFeedback/{orderId}: Gets the feedback of an existing order that matches the orderId parameter. The response is a JSON representing the Feedback (See data representation below).
-    * If the order does not exist or has not been rated or if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
+    * If the order does not exist or has not been rated, or if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
       * Order with Id {0} has not been rated. There is no feedback to retrieve.
       * Unable to retrieve order with orderId {0}
       * User {0} does not own an order with Id {1}
@@ -38,13 +38,13 @@ A set of RESTful endpoints will be exposed from the FeedbackService using ASP.NE
       * The order you are trying to rate has already been rated. Try modifying its feedback instead.
   
   * **[PUT]** /api/OrderFeedback/{orderId}: Asynchronously updates an order's feedback by the given orderId. The response is a Feedback object with the updated values.
-    * If the order does not exist or has not been rated if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. 
+    * If the order does not exist or has not been rated, or if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. 
       Also checks for valid rating. Error messages displayed:
       * Unable to retrieve order with orderId {0}
       * User {0} does not own an order with Id {1}
       
   * **[DELETE]** /api/OrderFeedback/{orderId}: Asynchronously deletes an order's feedback for an order that matches the given orderId. The response is a message notifying that the feedback was successfully deleted.
-    * If the order does not exist or has not been rated if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
+    * If the order does not exist or has not been rated, or if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
       * The feedback you are trying to delete does not exists.
       
 * **ProductFeedback**: Used to rate products within existing orders. Methods:
@@ -64,7 +64,7 @@ A set of RESTful endpoints will be exposed from the FeedbackService using ASP.NE
       * User {0} does not own an order with Id {1}
       
   * **[DELETE]** /api/ProductFeedback/{orderId}/{productId}: Asynchronously deletes a product's feedback which is part of an order that matches the given orderId. The response is a message notifying that the feedback was successfully deleted.
-    * If the order does not exist or has not been rated if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
+    * If the order does not exist or has not been rated, or if the userId provided in the headers does not exist or does not own an order that matches the orderId, the action is aborted. Error messages displayed:
       * The feedback you are trying to delete does not exists.
       
   #### FeedbackObject
@@ -109,3 +109,10 @@ The technical approach will use Entity Framework Core and Npgsql as data provide
 
 #### Database Diagram
 ![Database Diagram](https://github.com/albertxcastro/FeedbackService/blob/master/Diagrams/databaseDiagram.png)
+
+## API Documentation
+Swagger is used to autogenerate the API documentation.
+
+
+Please read more at the [Swagger website](https://swagger.io/)
+
